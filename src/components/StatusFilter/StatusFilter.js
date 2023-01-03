@@ -1,13 +1,13 @@
-import { Button } from 'components/Button/Button';
-import css from './StatusFilter.module.css';
 import { useSelector, useDispatch } from 'react-redux';
+import css from './StatusFilter.module.css';
+import { Button } from 'components/Button/Button';
 import {
   STATUS_FILTERS_ALL,
   STATUS_FILTERS_ACTIVE,
   STATUS_FILTERS_COMPLETED,
 } from '../../redux/constants';
 import { getFilter } from '../../redux/selectors';
-import { setStatusFilter } from '../../redux/actions';
+import { setStatusFilter } from '../../redux/filtersSlice';
 
 export const StatusFilter = () => {
   const filter = useSelector(getFilter);
