@@ -1,41 +1,75 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { nanoid } from 'nanoid';
+import { addTodo, deleteTodo, editTodo, fetchTodo } from './operations';
 
-const tasksInitialState = [
-  { id: 0, text: 'Learn HTML and CSS', completed: true },
-  { id: 1, text: 'Get good at JavaScript', completed: true },
-  { id: 2, text: 'Master React', completed: false },
-  { id: 3, text: 'Discover Redux', completed: false },
-  { id: 4, text: 'Build amazing apps', completed: false },
-];
+const tasksInitialState = {
+  items: [],
+  isLoading: false,
+  error: null,
+};
 
 const tasksSlice = createSlice({
   name: 'tasks',
   initialState: tasksInitialState,
-  reducers: {
-    addTask: {
-      reducer(state, action) {
-        return [...state, action.payload];
-      },
-      prepare(text) {
-        return {
-          payload: {
-            text,
-            id: nanoid(),
-            completed: false,
-          },
-        };
-      },
+
+  extraReducers: {
+    [fetchTodo.pending](state) {
+      state.isLoading = true;
     },
-    deleteTask(state, action) {
-      return state.filter(task => task.id !== action.payload);
+    [fetchTodo.fulfilled](state, action) {
+      state.isLoading = false;
+      state.error = null;
+      state.items = action.payload;
     },
-    toggleComleted(state, action) {
-      return state.map(task =>
-        task.id !== action.payload
-          ? task
-          : { ...task, completed: !task.completed }
-      );
+    [fetchTodo.rejected](state, action) {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+    [addTodo.pending](state) {
+      state.isLoading = true;
+    },
+    [addTodo.fulfilled](state, { payload }) {
+      return {
+        ...state,
+        isLoading: false,
+        error: null,
+        items: [...state.items, payload],
+      };
+    },
+    [addTodo.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
+    },
+
+    [deleteTodo.pending](state) {
+      state.isLoading = true;
+    },
+    [deleteTodo.fulfilled](state, { payload }) {
+      return {
+        ...state,
+        isLoading: false,
+        error: null,
+        items: state.items.filter(task => task.id !== payload.id),
+      };
+    },
+    [deleteTodo.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
+    },
+    [editTodo.pending](state) {
+      state.isLoading = true;
+    },
+    [editTodo.fulfilled](state, { payload }) {
+      return {
+        ...state,
+        isLoading: false,
+        items: state.items.map(task =>
+          task.id === payload.id ? payload : task
+        ),
+      };
+    },
+    [editTodo.rejected](state, { payload }) {
+      state.isLoading = false;
+      state.error = payload;
     },
   },
 });
