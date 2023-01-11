@@ -1,27 +1,17 @@
-import { useDispatch, useSelector } from 'react-redux';
+import AuthPage from 'pages/AuthPage/AuthPage';
+import HomePage from 'pages/HomePage/HomePage';
 import { useEffect } from 'react';
-import { Layout } from 'components/Layout/Layout';
-import { AppBar } from 'components/AppBar/AppBar';
-import { TaskForm } from 'components/TaskForm/TaskForm';
-import { TaskList } from 'components/TaskList/TaskList';
-import { fetchTodo } from 'redux/operations';
-import { getError, getIsLoading } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { authRefreshUser } from 'redux/auth/authOperations';
+import { selectIsLogin } from 'redux/auth/authSelector';
 
 export const App = () => {
+  const isLogin = useSelector(selectIsLogin);
   const dispatch = useDispatch();
-  const isLoading = useSelector(getIsLoading);
-  const error = useSelector(getError);
 
   useEffect(() => {
-    dispatch(fetchTodo());
+    dispatch(authRefreshUser());
   }, [dispatch]);
 
-  return (
-    <Layout>
-      <AppBar />
-      <TaskForm />
-      {isLoading && !error && <b>Request in progress...</b>}
-      <TaskList />
-    </Layout>
-  );
+  return isLogin ? <HomePage /> : <AuthPage />;
 };
