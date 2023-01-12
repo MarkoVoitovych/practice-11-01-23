@@ -10,6 +10,7 @@ const initialState = {
   isLoading: false,
   isLogin: false,
   error: null,
+  isFetching: false,
 };
 
 const authSlice = createSlice({
@@ -19,6 +20,12 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
       state.isLogin = true;
+    },
+    fetchingOn: state => {
+      state.isFetching = true;
+    },
+    fetchingOff: state => {
+      state.isFetching = false;
     },
   },
   extraReducers: build => {
@@ -42,4 +49,4 @@ const authSlice = createSlice({
 
 export const authReducer = authSlice.reducer;
 
-export const { setUser } = authSlice.actions;
+export const { setUser, fetchingOn, fetchingOff } = authSlice.actions;
